@@ -57,7 +57,8 @@ impl Dictionary {
     }
 
     pub fn size(&self) -> usize {
-        unsafe { root::keyvi_dictionary_get_size(self.dict) }
+        // TODO: check for overflowing conversion(s)
+        unsafe { root::keyvi_dictionary_get_size(self.dict) as usize }
     }
 
     pub fn get(&self, key: &str) -> KeyviMatch {
@@ -69,7 +70,11 @@ impl Dictionary {
     pub fn get_prefix_completions(&self, key: &str, cutoff: usize) -> KeyviMatchIterator {
         let key_c = CString::new(key).unwrap();
         let ptr = unsafe {
-            root::keyvi_dictionary_get_prefix_completions(self.dict, key_c.as_ptr(), cutoff)
+            root::keyvi_dictionary_get_prefix_completions(
+                self.dict, 
+                key_c.as_ptr(), 
+                cutoff as u64
+            )
         };
         KeyviMatchIterator::new(ptr)
     }
@@ -77,7 +82,11 @@ impl Dictionary {
     pub fn get_fuzzy(&self, key: &str, max_edit_distance: usize) -> KeyviMatchIterator {
         let key_c = CString::new(key).unwrap();
         let ptr = unsafe {
-            root::keyvi_dictionary_get_fuzzy(self.dict, key_c.as_ptr(), max_edit_distance)
+            root::keyvi_dictionary_get_fuzzy(
+                self.dict,
+                key_c.as_ptr(), 
+                max_edit_distance as u64
+            )
         };
         KeyviMatchIterator::new(ptr)
     }
@@ -85,8 +94,13 @@ impl Dictionary {
     pub fn get_multi_word_completions(&self, key: &str, cutoff: usize) -> KeyviMatchIterator {
         let key_c = CString::new(key).unwrap();
         let ptr = unsafe {
-            root::keyvi_dictionary_get_multi_word_completions(self.dict, key_c.as_ptr(), cutoff)
+            root::keyvi_dictionary_get_multi_word_completions(
+                self.dict, 
+                key_c.as_ptr(), 
+                cutoff as u64
+            )
         };
+
         KeyviMatchIterator::new(ptr)
     }
 }

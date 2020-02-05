@@ -48,11 +48,14 @@ impl StringVector {
     }
 
     pub fn size(&self) -> usize {
-        unsafe { root::keyvi_string_vector_get_size(self.vec) }
+        // TODO: check for overflowing conversion(s)
+        unsafe { root::keyvi_string_vector_get_size(self.vec) as usize }
     }
 
     pub fn get(&self, key: usize) -> String {
-        let c_buf: *mut ::std::os::raw::c_char = unsafe { root::keyvi_string_vector_get(self.vec, key) };
+        let c_buf: *mut ::std::os::raw::c_char = unsafe { 
+            root::keyvi_string_vector_get(self.vec, key as u64)
+        };
         KeyviString::new(c_buf).to_owned()
     }
 }
@@ -86,11 +89,14 @@ impl JsonVector {
     }
 
     pub fn size(&self) -> usize {
-        unsafe { root::keyvi_json_vector_get_size(self.vec) }
+        // TODO: check for overflowing conversion(s)
+        unsafe { root::keyvi_json_vector_get_size(self.vec) as usize }
     }
 
     pub fn get(&self, key: usize) -> String {
-        let c_buf: *mut ::std::os::raw::c_char = unsafe { root::keyvi_json_vector_get(self.vec, key) };
+        let c_buf: *mut ::std::os::raw::c_char = unsafe { 
+            root::keyvi_json_vector_get(self.vec, key as u64) 
+        };
         KeyviString::new(c_buf).to_owned()
     }
 }
